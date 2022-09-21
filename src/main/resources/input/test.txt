@@ -1,1 +1,21 @@
-c=d*(e-21)/4
+init { /* Esto es un bloque de declaracion de variables */
+        a1,a2,a3 : Float
+        variable : Int
+        p1,p2,p3 : String
+}
+a=3;
+while(a<3)
+{
+    if( not a<3+5*2 )
+    {
+        if( not a>=3 )
+        {
+            write(a);
+            a=iguales(3,[5+5*2,45.3,8/6]);
+        }
+    }
+    else
+    {
+        write(a);
+    }
+}
