@@ -42,6 +42,10 @@ terminal WHILE;
 terminal IGUALES;
 terminal CORCHETE_OPEN;
 terminal CORCHETE_CLOSE;
+terminal DO;
+terminal CASE;
+terminal DEFAULT;
+terminal ENDDO;
 
 // Non Terminals
 non terminal inicioprograma;
@@ -65,6 +69,9 @@ non terminal seleccion;
 non terminal ramaelse;
 non terminal iteracion;
 non terminal funciguales;
+non terminal funccase;
+non terminal casos;
+non terminal caso;
 non terminal listaexpresion;
 
 // Start Symbol Definition
@@ -95,6 +102,7 @@ sentence ::= escritura PYC {: System.out.println("sentence ::= escritura PYC"); 
 sentence ::= seleccion {: System.out.println("sentence ::= seleccion"); :};
 sentence ::= seleccion ramaelse {: System.out.println("sentence ::= seleccion"); :};
 sentence ::= iteracion {: System.out.println("sentence ::= iteracion"); :};
+sentence ::= funccase {: System.out.println("expression ::= funccase"); :};
 
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("assignment ::= IDENTIFIER ASSIG expression"); :};
 assignment ::= IDENTIFIER ASSIG STRING_CONSTANT {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); :};
@@ -103,6 +111,7 @@ expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};
 expression ::= funciguales {: System.out.println("expression ::= funciguales"); :};
+
 
 term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
@@ -141,3 +150,10 @@ funciguales ::= IGUALES OPEN_BRACKET expression COMA CORCHETE_OPEN listaexpresio
 
 listaexpresion ::= listaexpresion COMA expression {: System.out.println("listaexpresion ::= listaexpresion COMA expression"); :};
 listaexpresion ::= expression {: System.out.println("listaexpresion ::= expression"); :};
+
+funccase ::= DO IDENTIFIER casos DEFAULT bloqueprograma ENDDO {: System.out.println("funccase ::= DO IDENTIFIER casos DEFAULT bloqueprograma ENDDO"); :};
+funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO IDENTIFIER casos ENDDO"); :};
+
+casos ::= casos caso{: System.out.println("casos ::= casos caso"); :};
+casos ::= caso{: System.out.println("casos ::= caso"); :};
+caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT bloqueprograma ;

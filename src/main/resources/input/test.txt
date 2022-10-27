@@ -4,6 +4,7 @@ init { /* Esto es un bloque de declaracion de variables */
         p1,p2,p3 : String
 }
 a=3;
+
 while(a<3)
 {
     if( not a<3+5*2 )
@@ -19,3 +20,7 @@ while(a<3)
         write(a);
     }
 }
+do a
+case a > 0
+b=0;
+enddo

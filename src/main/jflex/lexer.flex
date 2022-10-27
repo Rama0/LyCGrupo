@@ -83,7 +83,10 @@ Iguales = "iguales"
 
 CorcheteOpen = "["
 CorcheteClose = "]"
-
+Do = "do"
+Case = "case"
+Default = "default"
+Enddo = "enddo"
 %%
 
 
@@ -109,6 +112,10 @@ CorcheteClose = "]"
    {If}                                    {return symbol(ParserSym.IF);}
    {Else}                                  {return symbol(ParserSym.ELSE);}
    {While}                                 {return symbol(ParserSym.WHILE);}
+   {Do}                                    {return symbol(ParserSym.DO);}
+   {Case}                                  {return symbol(ParserSym.CASE);}
+   {Default}                               {return symbol(ParserSym.DEFAULT);}
+   {Enddo}                                 {return symbol(ParserSym.ENDDO);}
 
     /* operators */
      {Plus}                                    { return symbol(ParserSym.PLUS); }
