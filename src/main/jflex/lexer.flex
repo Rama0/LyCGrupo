@@ -4,6 +4,7 @@ import java_cup.runtime.Symbol;
 import lyc.compiler.ParserSym;
 import lyc.compiler.model.*;
 import static lyc.compiler.constants.Constants.*;
+import lyc.compiler.files.SymbolTableGenerator;
 
 %%
 
@@ -20,6 +21,8 @@ import static lyc.compiler.constants.Constants.*;
 
 
 %{
+  SymbolTableGenerator symbolTable = new SymbolTableGenerator();
+
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
@@ -138,12 +141,12 @@ Enddo = "enddo"
    {Iguales}                             { return symbol(ParserSym.IGUALES); }
 
   /* identifiers */
-  {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
+  {Identifier}                             { symbolTable.add(symbol(ParserSym.IDENTIFIER, yytext())); return symbol(ParserSym.IDENTIFIER, yytext()); }
 
   /* Constants */
-  {IntegerConstant}                        { if(yytext().length()>5 || Integer.parseInt(yytext())>32767){System.out.println("Constante Integer Fuera de Rango");throw new InvalidIntegerException(yytext());}else{return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }}
-  {FloatConstant}                          { if(Float.parseFloat(yytext())>3.40282347e+38F){System.out.println("Constante Float Fuera de Rango");throw new NumberFormatException(yytext());}else{return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }}
-  {StringConstant}                         { if((yytext().length()-2)>40){System.out.println("Constante String No Puede Superar los 40 Caracteres");throw new InvalidLengthException(yytext());}else{return symbol(ParserSym.STRING_CONSTANT, yytext()); }}
+  {IntegerConstant}                        { if(yytext().length()>5 || Integer.parseInt(yytext())>32767){System.out.println("Constante Integer Fuera de Rango");throw new InvalidIntegerException(yytext());}else{symbolTable.add(symbol(ParserSym.INTEGER_CONSTANT, yytext()));return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }}
+  {FloatConstant}                          { if(Float.parseFloat(yytext())>3.40282347e+38F){System.out.println("Constante Float Fuera de Rango");throw new NumberFormatException(yytext());}else{symbolTable.add(symbol(ParserSym.FLOAT_CONSTANT, yytext()));return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }}
+  {StringConstant}                         { if((yytext().length()-2)>40){System.out.println("Constante String No Puede Superar los 40 Caracteres");throw new InvalidLengthException(yytext());}else{symbolTable.add(symbol(ParserSym.STRING_CONSTANT, yytext()));return symbol(ParserSym.STRING_CONSTANT, yytext()); }}
 
 
   /* whitespace */

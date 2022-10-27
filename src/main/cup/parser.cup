@@ -156,4 +156,5 @@ funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO ID
 
 casos ::= casos caso{: System.out.println("casos ::= casos caso"); :};
 casos ::= caso{: System.out.println("casos ::= caso"); :};
+
 caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT bloqueprograma ;
