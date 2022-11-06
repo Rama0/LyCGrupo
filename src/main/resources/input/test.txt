@@ -2,17 +2,23 @@ init { /* Esto es un bloque de declaracion de variables */
         a1,a2,a3 : Float
         variable : Int
         p1,p2,p3 : String
+        variableK : Float
 }
 a=3;
-
-while(a<3)
+read(b);
+while(a<3 || a==5)
 {
-    if( not a<3+5*2 )
+    if( a<3+5*2)
     {
         if( not a>=3 )
         {
-            write(a);
+            write("Esparragos");
             a=iguales(3,[5+5*2,45.3,8/6]);
+            if(  a>=3 & b==7)
+                    {
+                        write(a);
+                        a=iguales(3,[5+5*2,45.3,8/6]);
+                    }
         }
     }
     else

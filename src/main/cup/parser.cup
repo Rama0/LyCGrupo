@@ -1,9 +1,10 @@
 package lyc.compiler;
 
 import java_cup.runtime.*;
+import lyc.compiler.files.SymbolTableGenerator;
+import lyc.compiler.files.SymbolTable;
 
 class Parser;
-
 
 // Terminals
 terminal ASSIG;
@@ -86,12 +87,12 @@ declaracion ::= declaracion listadeclaracion {: System.out.println("declaracion 
 
 listadeclaracion ::= listavar DOS_PUNTOS tdato {: System.out.println("listaDeclaracion ::= listaVar DOS_PUNTOS tDato"); :};
 
-listavar ::= listavar COMA IDENTIFIER {: System.out.println("listaVar ::= listaVar COMA IDENTIFIER"); :};
-listavar ::= IDENTIFIER {: System.out.println("IDENTIFIER"); :};
+listavar ::= listavar COMA IDENTIFIER : id {: System.out.println("listaVar ::= listaVar COMA IDENTIFIER"); new SymbolTableGenerator().getTs().add(new SymbolTable(id+""));  :};
+listavar ::= IDENTIFIER : id {: System.out.println("IDENTIFIER"); new SymbolTableGenerator().getTs().add(new SymbolTable(id+"")); :};
 
-tdato ::= INTEGER {: System.out.println("tDato ::= INTEGER"); :};
-tdato ::= FLOAT {: System.out.println("tDato ::= FLOAT"); :};
-tdato ::= STRING {: System.out.println("tDato ::= STRING"); :};
+tdato ::= INTEGER : tdato {: System.out.println("tDato ::= INTEGER"); new SymbolTableGenerator().asignarTipodeDato(0); :};
+tdato ::= FLOAT : tdato {: System.out.println("tDato ::= FLOAT"); new SymbolTableGenerator().asignarTipodeDato(1); :};
+tdato ::= STRING : tdato {: System.out.println("tDato ::= STRING"); new SymbolTableGenerator().asignarTipodeDato(2); :};
 
 bloqueprograma ::= sentence {: System.out.println("programa ::= sentence"); :};
 bloqueprograma ::= bloqueprograma sentence {: System.out.println("programa ::= programa sentence"); :};
@@ -105,7 +106,7 @@ sentence ::= iteracion {: System.out.println("sentence ::= iteracion"); :};
 sentence ::= funccase {: System.out.println("expression ::= funccase"); :};
 
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("assignment ::= IDENTIFIER ASSIG expression"); :};
-assignment ::= IDENTIFIER ASSIG STRING_CONSTANT {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); :};
+assignment ::= IDENTIFIER ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
 
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
@@ -118,14 +119,14 @@ term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
 
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
-factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); :};
+factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
-factor ::= FLOAT_CONSTANT {: System.out.println("Factor = FloatConstant"); :};
+factor ::= FLOAT_CONSTANT : constant {: System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
 
 lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET PYC"); :};
 
 escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET"); :};
-escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); :};
+escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
 
 seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE {: System.out.println("seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE"); :};
 
@@ -156,4 +157,4 @@ funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO ID
 
 casos ::= casos caso{: System.out.println("casos ::= casos caso"); :};
 casos ::= caso{: System.out.println("casos ::= caso"); :};
-caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT bloqueprograma ;
+caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma {: System.out.println("caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
