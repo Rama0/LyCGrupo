@@ -3,6 +3,7 @@ package lyc.compiler;
 import java_cup.runtime.*;
 import lyc.compiler.files.SymbolTableGenerator;
 import lyc.compiler.files.SymbolTable;
+import lyc.compiler.files.IntermediateCodeGenerator;
 
 class Parser;
 
@@ -105,28 +106,28 @@ sentence ::= seleccion ramaelse {: System.out.println("sentence ::= seleccion");
 sentence ::= iteracion {: System.out.println("sentence ::= iteracion"); :};
 sentence ::= funccase {: System.out.println("expression ::= funccase"); :};
 
-assignment ::= IDENTIFIER ASSIG expression {: System.out.println("assignment ::= IDENTIFIER ASSIG expression"); :};
-assignment ::= IDENTIFIER ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
+assignment ::= IDENTIFIER : id ASSIG expression {: System.out.println("assignment ::= IDENTIFIER ASSIG expression"); new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); :};
+assignment ::= IDENTIFIER : id ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+""));  new IntermediateCodeGenerator().getPolaca().add(constant+"");  new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); :};
 
-expression ::= expression PLUS term {: System.out.println("+"); :};
-expression ::= expression SUB term {: System.out.println("-"); :};
+expression ::= expression PLUS term {: System.out.println("+"); new IntermediateCodeGenerator().getPolaca().add("+"); :};
+expression ::= expression SUB term {: System.out.println("-"); new IntermediateCodeGenerator().getPolaca().add("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};
 expression ::= funciguales {: System.out.println("expression ::= funciguales"); :};
 
 
-term ::= term MULT factor {: System.out.println("*"); :};
-term ::= term DIV factor {: System.out.println("/"); :};
+term ::= term MULT factor {: System.out.println("*"); new IntermediateCodeGenerator().getPolaca().add("*"); :};
+term ::= term DIV factor {: System.out.println("/"); new IntermediateCodeGenerator().getPolaca().add("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
 
-factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
-factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
+factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); new IntermediateCodeGenerator().getPolaca().add(id+""); :};
+factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
-factor ::= FLOAT_CONSTANT : constant {: System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
+factor ::= FLOAT_CONSTANT : constant {: System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
 
-lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET PYC"); :};
+lectura ::= READ OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {: System.out.println("lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET PYC"); new IntermediateCodeGenerator().getPolaca().add(id+"");  new IntermediateCodeGenerator().getPolaca().add("READ"); :};
 
-escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET"); :};
-escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
+escritura ::= WRITE OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET"); new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
+escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
 
 seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE {: System.out.println("seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE"); :};
 
@@ -147,10 +148,10 @@ oplog ::= LOWER_THAN {: System.out.println("oplog ::= LOWER_THAN"); :};
 oplog ::= LOWER_AND_EQUAL {: System.out.println("oplog ::= LOWER_AND_EQUAL"); :};
 oplog ::= EQUAL {: System.out.println("oplog ::= EQUAL"); :};
 
-funciguales ::= IGUALES OPEN_BRACKET expression COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET {: System.out.println("funciguales ::= IGUALES OPEN_BRACKET expression COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET"); :};
+funciguales ::= IGUALES OPEN_BRACKET expression {: new IntermediateCodeGenerator().getPolaca().add("@aux1"); new IntermediateCodeGenerator().getPolaca().add(":="); :} COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET {: System.out.println("funciguales ::= IGUALES OPEN_BRACKET expression COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET"); :};
 
-listaexpresion ::= listaexpresion COMA expression {: System.out.println("listaexpresion ::= listaexpresion COMA expression"); :};
-listaexpresion ::= expression {: System.out.println("listaexpresion ::= expression"); :};
+listaexpresion ::= listaexpresion COMA expression {: System.out.println("listaexpresion ::= listaexpresion COMA expression"); new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@aux1");  new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add("CMP"); new IntermediateCodeGenerator().getPolaca().add("BNE"); new IntermediateCodeGenerator().getPolaca().add( new IntermediateCodeGenerator().getPolaca().size()+6+""); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("1"); new IntermediateCodeGenerator().getPolaca().add("+"); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add(":="); System.out.println("listaexpresion ::= expression");:};
+listaexpresion ::= expression {: new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("0"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@aux1");  new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add("CMP"); new IntermediateCodeGenerator().getPolaca().add("BNE"); new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPolaca().size()+6+""); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("1"); new IntermediateCodeGenerator().getPolaca().add("+"); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add(":="); System.out.println("listaexpresion ::= expression"); :};
 
 funccase ::= DO IDENTIFIER casos DEFAULT bloqueprograma ENDDO {: System.out.println("funccase ::= DO IDENTIFIER casos DEFAULT bloqueprograma ENDDO"); :};
 funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO IDENTIFIER casos ENDDO"); :};
