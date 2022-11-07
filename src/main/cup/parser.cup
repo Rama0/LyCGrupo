@@ -81,22 +81,39 @@ start with inicioprograma;
 
 inicioprograma ::= programa {: System.out.println("Fin de Programa"); :};
 
-programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma {: System.out.println("programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma"); :};
+programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma {:  System.out.println("programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma");
+                                                                        new IntermediateCodeGenerator().getPolaca().add("\n"); :};
 
-declaracion ::= listadeclaracion {: System.out.println("declaracion ::= listaDeclaracion"); :};
-declaracion ::= declaracion listadeclaracion {: System.out.println("declaracion ::= declaracion listaDeclaracion"); :};
+declaracion ::= listadeclaracion {: System.out.println("declaracion ::= listaDeclaracion");
+                                    new IntermediateCodeGenerator().getPolaca().add("\n");:};
+declaracion ::= declaracion listadeclaracion {: System.out.println("declaracion ::= declaracion listaDeclaracion");
+                                                new IntermediateCodeGenerator().getPolaca().add("\n");:};
 
-listadeclaracion ::= listavar DOS_PUNTOS tdato {: System.out.println("listaDeclaracion ::= listaVar DOS_PUNTOS tDato"); :};
+listadeclaracion ::= listavar DOS_PUNTOS tdato {:   System.out.println("listaDeclaracion ::= listaVar DOS_PUNTOS tDato");
+                                                    new IntermediateCodeGenerator().getPolaca().add(":");:};
 
-listavar ::= listavar COMA IDENTIFIER : id {: System.out.println("listaVar ::= listaVar COMA IDENTIFIER"); new SymbolTableGenerator().getTs().add(new SymbolTable(id+""));  :};
-listavar ::= IDENTIFIER : id {: System.out.println("IDENTIFIER"); new SymbolTableGenerator().getTs().add(new SymbolTable(id+"")); :};
+listavar ::= listavar COMA IDENTIFIER : id {:   System.out.println("listaVar ::= listaVar COMA IDENTIFIER");
+                                                new SymbolTableGenerator().getTs().add(new SymbolTable(id+""));
+                                                new IntermediateCodeGenerator().getPolaca().add(id +"");
+                                                new IntermediateCodeGenerator().getPolaca().add(",");:};
+listavar ::= IDENTIFIER : id {: System.out.println("IDENTIFIER");
+                                new SymbolTableGenerator().getTs().add(new SymbolTable(id+""));
+                                new IntermediateCodeGenerator().getPolaca().add(id +""); :};
 
-tdato ::= INTEGER : tdato {: System.out.println("tDato ::= INTEGER"); new SymbolTableGenerator().asignarTipodeDato(0); :};
-tdato ::= FLOAT : tdato {: System.out.println("tDato ::= FLOAT"); new SymbolTableGenerator().asignarTipodeDato(1); :};
-tdato ::= STRING : tdato {: System.out.println("tDato ::= STRING"); new SymbolTableGenerator().asignarTipodeDato(2); :};
+tdato ::= INTEGER : tdato {:    System.out.println("tDato ::= INTEGER");
+                                new SymbolTableGenerator().asignarTipodeDato(0);
+                                new IntermediateCodeGenerator().getPolaca().add("Int"); :};
+tdato ::= FLOAT : tdato {:  System.out.println("tDato ::= FLOAT");
+                            new SymbolTableGenerator().asignarTipodeDato(1);
+                             new IntermediateCodeGenerator().getPolaca().add("Float");:};
+tdato ::= STRING : tdato {: System.out.println("tDato ::= STRING");
+                            new SymbolTableGenerator().asignarTipodeDato(2);
+                             new IntermediateCodeGenerator().getPolaca().add("String"); :};
 
-bloqueprograma ::= sentence {: System.out.println("programa ::= sentence"); :};
-bloqueprograma ::= bloqueprograma sentence {: System.out.println("programa ::= programa sentence"); :};
+bloqueprograma ::= sentence {:  System.out.println("programa ::= sentence");
+                                new IntermediateCodeGenerator().getPolaca().add("\n");:};
+bloqueprograma ::= bloqueprograma sentence {:   System.out.println("programa ::= programa sentence");
+                                                new IntermediateCodeGenerator().getPolaca().add("\n");:};
 
 sentence ::= assignment PYC {: System.out.println("sentence ::= assignment PYC"); :};
 sentence ::= lectura PYC {: System.out.println("sentence ::= lectura PYC"); :};
@@ -106,7 +123,9 @@ sentence ::= seleccion ramaelse {: System.out.println("sentence ::= seleccion");
 sentence ::= iteracion {: System.out.println("sentence ::= iteracion"); :};
 sentence ::= funccase {: System.out.println("expression ::= funccase"); :};
 
-assignment ::= IDENTIFIER : id ASSIG expression {: System.out.println("assignment ::= IDENTIFIER ASSIG expression"); new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); :};
+assignment ::= IDENTIFIER : id ASSIG expression {:  System.out.println("assignment ::= IDENTIFIER ASSIG expression");
+                                                    new IntermediateCodeGenerator().getPolaca().add(id+"");
+                                                    new IntermediateCodeGenerator().getPolaca().add(":="); :};
 assignment ::= IDENTIFIER : id ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+""));  new IntermediateCodeGenerator().getPolaca().add(constant+"");  new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); :};
 
 expression ::= expression PLUS term {: System.out.println("+"); new IntermediateCodeGenerator().getPolaca().add("+"); :};
@@ -120,13 +139,17 @@ term ::= term DIV factor {: System.out.println("/"); new IntermediateCodeGenerat
 term ::= factor {: System.out.println("Term = factor"); :};
 
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); new IntermediateCodeGenerator().getPolaca().add(id+""); :};
-factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
+factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant );
+                                        new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+""));
+                                        new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
 factor ::= FLOAT_CONSTANT : constant {: System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
 
 lectura ::= READ OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {: System.out.println("lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET PYC"); new IntermediateCodeGenerator().getPolaca().add(id+"");  new IntermediateCodeGenerator().getPolaca().add("READ"); :};
 
-escritura ::= WRITE OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET"); new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
+escritura ::= WRITE OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {:   System.out.println("escritura ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET");
+                                                                    new IntermediateCodeGenerator().getPolaca().add(id+"");
+                                                                    new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
 escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); new IntermediateCodeGenerator().getPolaca().add(constant+""); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
 
 seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE {: System.out.println("seleccion ::= IF OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE"); :};

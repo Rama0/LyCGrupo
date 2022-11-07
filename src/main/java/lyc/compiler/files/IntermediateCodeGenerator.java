@@ -17,7 +17,6 @@ public class IntermediateCodeGenerator implements FileGenerator {
         }
         //fileWriter.write("TODO");
     }
-
     public ArrayList<String> getPolaca (){
         return polaca;
     }
