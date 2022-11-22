@@ -145,8 +145,7 @@ iteracion ::= WHILE OPEN_BRACKET {: new IntermediateCodeGenerator().getPilaInt()
                                  {: System.out.println("iteracion ::= WHILE OPEN_BRACKET condicion CLOSE_BRACKET LLAVE_OPEN bloqueprograma LLAVE_CLOSE");
                                     new IntermediateCodeGenerator().getPolaca().add("BI");
                                     new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPilaInt().pop(), String.valueOf(2 + new IntermediateCodeGenerator().getPolaca().size()));
-                                    new IntermediateCodeGenerator().getPolaca().add(String.valueOf(new IntermediateCodeGenerator().getPilaInt().pop()));
-                                    :};
+                                    new IntermediateCodeGenerator().getPolaca().add(String.valueOf(new IntermediateCodeGenerator().getPilaInt().pop())); :};
 condicion ::= operando oplog operando  {:   System.out.println("condicion ::= operando oplog operando");
                                             new IntermediateCodeGenerator().getPolaca().add("CMP");
                                             String x = new IntermediateCodeGenerator().getPila().pop();
@@ -191,4 +190,10 @@ funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO ID
 
 casos ::= casos caso{: System.out.println("casos ::= casos caso"); :};
 casos ::= caso{: System.out.println("casos ::= caso"); :};
-caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma {: System.out.println("caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma"); new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+"")); :};
+caso  ::= CASE IDENTIFIER : id oplog INTEGER_CONSTANT : constant {: new IntermediateCodeGenerator().getPolaca().add(id+"");
+                                                                    new IntermediateCodeGenerator().getPolaca().add(constant+"");
+                                                                    new IntermediateCodeGenerator().getPolaca().add("CMP");
+                                                                    new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPila().pop());
+                                                                    new IntermediateCodeGenerator().getPilaInt().push(new IntermediateCodeGenerator().getPolaca().size()); :} bloqueprograma {: System.out.println("caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma");
+                                                                                                                                                                                            new SymbolTableGenerator().getLsCte().add(new SymbolTable(constant+""));
+                                                                                                                                                                                            new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPilaInt().pop(), String.valueOf(1 + new IntermediateCodeGenerator().getPolaca().size())); :};
