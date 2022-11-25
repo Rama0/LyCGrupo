@@ -4,7 +4,7 @@ public class SymbolTable {
     private String name;
     private String dataType;
     private String value;
-    private int length;
+    private String length;
 
     public SymbolTable(String name){ this.name=name;}
 
@@ -20,7 +20,7 @@ public class SymbolTable {
         return value;
     }
 
-    public int getLength() {
+    public String getLength() {
         return length;
     }
 
@@ -37,7 +37,7 @@ public class SymbolTable {
         this.value = value;
     }
 
-    public void setLength(int length) {
+    public void setLength(String length) {
         this.length = length;
     }
 }
