@@ -4,13 +4,4 @@ init { /* Esto es un bloque de declaracion de variables */
         p1,p2,p3 : String
         variableK : Float
 }
-if((a1*2+5)>a2 & a1<a2)
-{
-    a1=3.5;
-    p3="Mundo";
-    p2="Mundo";
-}
-else
-{
-variableK=3.5;
-}
+a=a+1;

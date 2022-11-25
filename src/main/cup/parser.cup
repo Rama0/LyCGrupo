@@ -4,6 +4,7 @@ import java_cup.runtime.*;
 import lyc.compiler.files.SymbolTableGenerator;
 import lyc.compiler.files.SymbolTable;
 import lyc.compiler.files.IntermediateCodeGenerator;
+import lyc.compiler.files.AsmCodeGenerator;
 
 class Parser;
 
@@ -80,7 +81,7 @@ non terminal sel;
 // Start Symbol Definition
 start with inicioprograma;
 
-inicioprograma ::= programa {: System.out.println("Fin de Programa"); :};
+inicioprograma ::= programa {: System.out.println("Fin de Programa"); new AsmCodeGenerator().generar_assembler(new IntermediateCodeGenerator().getPolaca()); :};
 
 programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma {:  System.out.println("programa ::= INIT LLAVE_OPEN declaracion LLAVE_CLOSE bloqueprograma");:};
 
