@@ -84,7 +84,7 @@ public class AsmCodeGenerator implements FileGenerator {
         {
             if(operador.startsWith("ET"))
             {
-                listaCoodigoAssembler.add("ETIQUETA"+indiceEtiquetas);
+                listaCoodigoAssembler.add("ETIQUETA"+indiceEtiquetas+":");
                 mapaSaltos.put(i+"", "ETIQUETA"+indiceEtiquetas);
                 indiceEtiquetas++;
             }
@@ -219,14 +219,14 @@ public class AsmCodeGenerator implements FileGenerator {
         {
             return "JNE";
         }
-        return "BI";
+        return "JMP";
     }
 
     private void validarEscrituradeEtiqueta(String i)
     {
         if(mapaSaltos.containsKey(i))
         {
-            listaCoodigoAssembler.add(mapaSaltos.get(i));
+            listaCoodigoAssembler.add(mapaSaltos.get(i)+":");
             mapaSaltos.remove(i);
         }
     }
