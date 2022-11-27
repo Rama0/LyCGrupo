@@ -114,7 +114,7 @@ assignment ::= IDENTIFIER : id ASSIG {:new SymbolTableGenerator().getPilaTipos()
                                                     new IntermediateCodeGenerator().getPolaca().add(id+"");
                                                     new IntermediateCodeGenerator().getPolaca().add(":=");
                                                     new SymbolTableGenerator().validarIdDeclarado(id+""); new SymbolTableGenerator().validarTipos(new SymbolTableGenerator().getTipo(id+""), new SymbolTableGenerator().getPilaTipos().pop()); :};
-assignment ::= IDENTIFIER : id ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getTs().add(new SymbolTable(constant+"")); new SymbolTableGenerator().asignarTipodeDato("CTE_String");  new IntermediateCodeGenerator().getPolaca().add(constant+"");  new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); new SymbolTableGenerator().validarIdDeclarado(id+""); new SymbolTableGenerator().validarTipos(new SymbolTableGenerator().getTipo(id+""),"String"); :};
+assignment ::= IDENTIFIER : id ASSIG STRING_CONSTANT : constant {: System.out.println("assignment ::= IDENTIFIER ASSIG STRING_CONSTANT"); new SymbolTableGenerator().getTs().add(new SymbolTable("_"+constant)); new SymbolTableGenerator().asignarTipodeDato("CTE_String");  new IntermediateCodeGenerator().getPolaca().add("_"+constant);  new IntermediateCodeGenerator().getPolaca().add(id+""); new IntermediateCodeGenerator().getPolaca().add(":="); new SymbolTableGenerator().validarIdDeclarado(id+""); new SymbolTableGenerator().validarTipos(new SymbolTableGenerator().getTipo(id+""),"String"); :};
 
 expression ::= expression PLUS term {: System.out.println("+"); new IntermediateCodeGenerator().getPolaca().add("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); new IntermediateCodeGenerator().getPolaca().add("-"); :};
@@ -128,10 +128,10 @@ term ::= factor {: System.out.println("Term = factor"); :};
 
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); new IntermediateCodeGenerator().getPolaca().add(id+""); new SymbolTableGenerator().validarIdDeclarado(id+""); new SymbolTableGenerator().recargarTipo(id+"");:};
 factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant );
-                                        new SymbolTableGenerator().getTs().add(new SymbolTable(constant+"")); new SymbolTableGenerator().asignarTipodeDato("CTE_Int");
-                                        new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
+                                        new SymbolTableGenerator().getTs().add(new SymbolTable("_"+constant)); new SymbolTableGenerator().asignarTipodeDato("CTE_Int");
+                                        new IntermediateCodeGenerator().getPolaca().add("_"+constant); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
-factor ::= FLOAT_CONSTANT : constant {: new SymbolTableGenerator().getPilaTipos().pop(); new SymbolTableGenerator().getPilaTipos().push("Float"); System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getTs().add(new SymbolTable(constant+"")); new SymbolTableGenerator().asignarTipodeDato("CTE_Float"); new IntermediateCodeGenerator().getPolaca().add(constant+""); :};
+factor ::= FLOAT_CONSTANT : constant {: new SymbolTableGenerator().getPilaTipos().pop(); new SymbolTableGenerator().getPilaTipos().push("Float"); System.out.println("Factor = FloatConstant");  new SymbolTableGenerator().getTs().add(new SymbolTable("_"+constant)); new SymbolTableGenerator().asignarTipodeDato("CTE_Float"); new IntermediateCodeGenerator().getPolaca().add("_"+constant); :};
 
 lectura ::= READ OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {: System.out.println("lectura ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET PYC"); new IntermediateCodeGenerator().getPolaca().add(id+"");  new IntermediateCodeGenerator().getPolaca().add("READ"); new SymbolTableGenerator().validarIdDeclarado(id+""); :};
 
@@ -139,7 +139,7 @@ escritura ::= WRITE OPEN_BRACKET IDENTIFIER : id CLOSE_BRACKET {:   System.out.p
                                                                     new IntermediateCodeGenerator().getPolaca().add(id+"");
                                                                     new IntermediateCodeGenerator().getPolaca().add("WRITE");
                                                                     new SymbolTableGenerator().validarIdDeclarado(id+""); :};
-escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getTs().add(new SymbolTable(constant+"")); new SymbolTableGenerator().asignarTipodeDato("CTE_String"); new IntermediateCodeGenerator().getPolaca().add(constant+""); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
+escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT : constant CLOSE_BRACKET {: System.out.println("escritura ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET"); new SymbolTableGenerator().getTs().add(new SymbolTable("_"+constant)); new SymbolTableGenerator().asignarTipodeDato("CTE_String"); new IntermediateCodeGenerator().getPolaca().add("_"+constant); new IntermediateCodeGenerator().getPolaca().add("WRITE"); :};
 
 seleccion ::= sel {: int x = new IntermediateCodeGenerator().getPilaFlag().pop();
     new IntermediateCodeGenerator().actualizarCeldasDelIf(x,0);:};
@@ -165,7 +165,12 @@ condicion ::= operando oplog operando {:   System.out.println("condicion ::= ope
                                              new IntermediateCodeGenerator().getPilaFlag().push(2); new IntermediateCodeGenerator().cleanIndx();
                                               String op1 = new SymbolTableGenerator().getPilaTipos().pop();
                                               String op2 = new SymbolTableGenerator().getPilaTipos().pop();
-                                              new SymbolTableGenerator().compararOperandos(op1,op2);:};
+                                              new SymbolTableGenerator().compararOperandos(op1,op2);
+                                              new SymbolTableGenerator().getTs().add(new SymbolTable("@exp1"));
+                                              new SymbolTableGenerator().asignarTipodeDato("Float");
+                                              new SymbolTableGenerator().getTs().add(new SymbolTable("@exp2"));
+                                              new SymbolTableGenerator().asignarTipodeDato("Float");
+                                              :};
 condicion ::= NOT operando oplog operando  {:   System.out.println("condicion ::= operando oplog operando"); new IntermediateCodeGenerator().getPolaca().add("@exp1"); new IntermediateCodeGenerator().getPolaca().add("@exp2");
                                                 new IntermediateCodeGenerator().getPolaca().add("CMP");
                                                 String x = new IntermediateCodeGenerator().getPila().pop();
@@ -175,7 +180,12 @@ condicion ::= NOT operando oplog operando  {:   System.out.println("condicion ::
                                                   new IntermediateCodeGenerator().getPilaFlag().push(2); new IntermediateCodeGenerator().cleanIndx();
                                                     String op1 = new SymbolTableGenerator().getPilaTipos().pop();
                                                     String op2 = new SymbolTableGenerator().getPilaTipos().pop();
-                                                    new SymbolTableGenerator().compararOperandos(op1,op2);:};
+                                                    new SymbolTableGenerator().compararOperandos(op1,op2);
+                                                    new SymbolTableGenerator().getTs().add(new SymbolTable("@exp1"));
+                                                    new SymbolTableGenerator().asignarTipodeDato("Float");
+                                                    new SymbolTableGenerator().getTs().add(new SymbolTable("@exp2"));
+                                                    new SymbolTableGenerator().asignarTipodeDato("Float");
+                                                    :};
 condicion ::= operando oplog operando {:  new IntermediateCodeGenerator().getPolaca().add("@exp1"); new IntermediateCodeGenerator().getPolaca().add("@exp2");
 new IntermediateCodeGenerator().getPolaca().add("CMP"); String x = new IntermediateCodeGenerator().getPila().pop();
 new IntermediateCodeGenerator().getPolaca().add(x);
@@ -183,6 +193,10 @@ new IntermediateCodeGenerator().getPilaInt().push(new IntermediateCodeGenerator(
 String op1 = new SymbolTableGenerator().getPilaTipos().pop();
 String op2 = new SymbolTableGenerator().getPilaTipos().pop();
 new SymbolTableGenerator().compararOperandos(op1,op2);
+new SymbolTableGenerator().getTs().add(new SymbolTable("@exp1"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
+new SymbolTableGenerator().getTs().add(new SymbolTable("@exp2"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
 :}
 AND operando oplog operando {:    System.out.println("condicion ::= operando oplog operando AND operando oplog operando");
 new IntermediateCodeGenerator().getPolaca().add("@exp3"); new IntermediateCodeGenerator().getPolaca().add("@exp4");
@@ -194,6 +208,10 @@ new IntermediateCodeGenerator().getPilaFlag().push(1); new IntermediateCodeGener
 String op1 = new SymbolTableGenerator().getPilaTipos().pop();
 String op2 = new SymbolTableGenerator().getPilaTipos().pop();
 new SymbolTableGenerator().compararOperandos(op1,op2);
+new SymbolTableGenerator().getTs().add(new SymbolTable("@exp3"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
+new SymbolTableGenerator().getTs().add(new SymbolTable("@exp4"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
 :};
 condicion ::= operando oplog operando {:  new IntermediateCodeGenerator().getPolaca().add("@exp1"); new IntermediateCodeGenerator().getPolaca().add("@exp2");
                                       new IntermediateCodeGenerator().getPolaca().add("CMP"); String x = new IntermediateCodeGenerator().getPila().pop();
@@ -206,6 +224,10 @@ condicion ::= operando oplog operando {:  new IntermediateCodeGenerator().getPol
                                       String op1 = new SymbolTableGenerator().getPilaTipos().pop();
                                       String op2 = new SymbolTableGenerator().getPilaTipos().pop();
                                       new SymbolTableGenerator().compararOperandos(op1,op2);
+                                      new SymbolTableGenerator().getTs().add(new SymbolTable("@exp1"));
+                                      new SymbolTableGenerator().asignarTipodeDato("Float");
+                                      new SymbolTableGenerator().getTs().add(new SymbolTable("@exp2"));
+                                      new SymbolTableGenerator().asignarTipodeDato("Float");
                                       :}
 OR operando oplog operando {: System.out.println("condicion ::= operando oplog operando OR operando oplog operando");
                                                                     new IntermediateCodeGenerator().getPolaca().add("@exp3"); new IntermediateCodeGenerator().getPolaca().add("@exp4");
@@ -217,6 +239,10 @@ OR operando oplog operando {: System.out.println("condicion ::= operando oplog o
                                                                     String op1 = new SymbolTableGenerator().getPilaTipos().pop();
                                                                     String op2 = new SymbolTableGenerator().getPilaTipos().pop();
                                                                     new SymbolTableGenerator().compararOperandos(op1,op2);
+                                                                    new SymbolTableGenerator().getTs().add(new SymbolTable("@exp3"));
+                                                                    new SymbolTableGenerator().asignarTipodeDato("Float");
+                                                                    new SymbolTableGenerator().getTs().add(new SymbolTable("@exp4"));
+                                                                    new SymbolTableGenerator().asignarTipodeDato("Float");
                                                                     :};
 
 operando ::= {: new SymbolTableGenerator().getPilaTipos().push("Int"); :} expression {: System.out.println("operando ::= expression"); new IntermediateCodeGenerator().getPolaca().add("@exp"+  new IntermediateCodeGenerator().getIndx()); new IntermediateCodeGenerator().getPolaca().add(":="); :};
@@ -233,7 +259,16 @@ oplog ::= EQUAL {:  System.out.println("oplog ::= EQUAL");
                     new IntermediateCodeGenerator().getPila().push("BNE");:};
 
 funciguales ::= IGUALES OPEN_BRACKET expression {: new IntermediateCodeGenerator().getPolaca().add("@aux1"); new IntermediateCodeGenerator().getPolaca().add(":="); :} COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET {: System.out.println("funciguales ::= IGUALES OPEN_BRACKET expression COMA CORCHETE_OPEN listaexpresion CORCHETE_CLOSE CLOSE_BRACKET");
-new IntermediateCodeGenerator().getPolaca().add("@cant");:};
+new IntermediateCodeGenerator().getPolaca().add("@cant");
+new SymbolTableGenerator().getTs().add(new SymbolTable("@cant"));
+new SymbolTableGenerator().asignarTipodeDato("Int");
+new SymbolTableGenerator().getTs().add(new SymbolTable("@aux1"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
+new SymbolTableGenerator().getTs().add(new SymbolTable("@aux2"));
+new SymbolTableGenerator().asignarTipodeDato("Float");
+new SymbolTableGenerator().getPilaTipos().pop();
+new SymbolTableGenerator().getPilaTipos().push("Int");
+:};
 
 listaexpresion ::= listaexpresion COMA expression {: System.out.println("listaexpresion ::= listaexpresion COMA expression"); new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@aux1");  new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add("CMP"); new IntermediateCodeGenerator().getPolaca().add("BNE"); new IntermediateCodeGenerator().getPolaca().add( new IntermediateCodeGenerator().getPolaca().size()+6+""); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("1"); new IntermediateCodeGenerator().getPolaca().add("+"); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add(":="); System.out.println("listaexpresion ::= expression");:};
 listaexpresion ::= expression {: new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("0"); new IntermediateCodeGenerator().getPolaca().add(":="); new IntermediateCodeGenerator().getPolaca().add("@aux1");  new IntermediateCodeGenerator().getPolaca().add("@aux2"); new IntermediateCodeGenerator().getPolaca().add("CMP"); new IntermediateCodeGenerator().getPolaca().add("BNE"); new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPolaca().size()+6+""); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add("1"); new IntermediateCodeGenerator().getPolaca().add("+"); new IntermediateCodeGenerator().getPolaca().add("@cant"); new IntermediateCodeGenerator().getPolaca().add(":="); System.out.println("listaexpresion ::= expression"); :};
@@ -244,11 +279,11 @@ funccase ::= DO IDENTIFIER casos ENDDO {: System.out.println("funccase ::= DO ID
 casos ::= casos caso{: System.out.println("casos ::= casos caso"); :};
 casos ::= caso{: System.out.println("casos ::= caso"); :};
 caso  ::= CASE IDENTIFIER : id oplog INTEGER_CONSTANT : constant {: new IntermediateCodeGenerator().getPolaca().add(id+"");
-                                                                    new IntermediateCodeGenerator().getPolaca().add(constant+"");
+                                                                    new IntermediateCodeGenerator().getPolaca().add("_"+constant);
                                                                     new IntermediateCodeGenerator().getPolaca().add("CMP");
                                                                     new IntermediateCodeGenerator().getPolaca().add(new IntermediateCodeGenerator().getPila().pop());
                                                                     new IntermediateCodeGenerator().getPilaInt().push(new IntermediateCodeGenerator().getPolaca().size());
                                                                     new IntermediateCodeGenerator().getPolaca().add("AVANZO");
                                                                     :} bloqueprograma {: System.out.println("caso  ::= CASE IDENTIFIER oplog INTEGER_CONSTANT : constant bloqueprograma");
-                                                                                                                                                                                            new SymbolTableGenerator().getTs().add(new SymbolTable(constant+"")); new SymbolTableGenerator().asignarTipodeDato("CTE_Int"); new SymbolTableGenerator().validarIdDeclarado(id+"");
+                                                                                                                                                                                            new SymbolTableGenerator().getTs().add(new SymbolTable("_"+constant)); new SymbolTableGenerator().asignarTipodeDato("CTE_Int"); new SymbolTableGenerator().validarIdDeclarado(id+"");
                                                                                                                                                                                             new IntermediateCodeGenerator().getPolaca().set(new IntermediateCodeGenerator().getPilaInt().pop(), String.valueOf(new IntermediateCodeGenerator().getPolaca().size())); :};

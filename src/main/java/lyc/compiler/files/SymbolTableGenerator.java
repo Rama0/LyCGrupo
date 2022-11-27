@@ -41,14 +41,16 @@ public class SymbolTableGenerator implements FileGenerator{
                 if(typeDato.equals("CTE_String"))
                 {
                     String subString = elem.getName().substring(1,elem.getName().length()-1);
-                    elem.setName("_"+subString);
+                    //elem.setName("_"+subString);
                     elem.setValue(subString);
                     elem.setLength(subString.length()+"");
                 }
                 else
                 {
-                    elem.setValue(elem.getName());
-                    elem.setName("_"+elem.getName());
+                    String subString = elem.getName().substring(1,elem.getName().length());
+                    //elem.setValue(elem.getName());
+                    elem.setValue(subString);
+                    //elem.setName("_"+elem.getName());
                     elem.setLength("?");
                 }
             }
@@ -59,7 +61,7 @@ public class SymbolTableGenerator implements FileGenerator{
             }
             else
             {
-                if(typeDato.equals("Int") || typeDato.equals("Float") || typeDato.equals("String"))
+                if( (typeDato.equals("Int") || typeDato.equals("Float") || typeDato.equals("String")) && !elem.getName().startsWith("@"))
                 {
                     throw new  NumberFormatException("ID "+ "\""+elem.getName()+"\""+" declarado repetidamente");
                 }
@@ -118,4 +120,6 @@ public class SymbolTableGenerator implements FileGenerator{
             throw new IllegalArgumentException("Comparacion entre tipos No Compatibles");
         }
     }
+
+    public HashMap<String,SymbolTable> getMapTS(){return this.mapTS;}
 }
